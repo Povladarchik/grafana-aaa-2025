@@ -1,0 +1,356 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "ml-model-monitoring",
+    "title": "ML Model Monitoring Dashboard",
+    "tags": ["monitoring", "ml", "prometheus"],
+    "timezone": "browser",
+    "schemaVersion": 37,
+    "version": 0,
+    "refresh": "5s",
+    "panels": [
+      {
+        "type": "row",
+        "title": "Rates",
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "type": "stat",
+        "title": "Requests per Minute",
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 0,
+          "y": 1
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "req/min"
+          }
+        },
+        "targets": [
+          {
+            "expr": "rate(requests_per_minute[1m])",
+            "range": true,
+            "interval": "",
+            "legendFormat": "",
+            "scrapedFrom": "_auto"
+          }
+        ]
+      },
+      {
+        "type": "stat",
+        "title": "Error Rate (%)",
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 6,
+          "y": 1
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent"
+          }
+        },
+        "targets": [
+          {
+            "expr": "rate(errors_total[1m]) / rate(requests_per_minute[1m]) * 100",
+            "range": true,
+            "interval": "",
+            "legendFormat": "",
+            "scrapedFrom": "_auto"
+          }
+        ],
+        "alert": {
+          "conditions": [
+            {
+              "evaluator": {
+                "params": [10],
+                "type": "gt"
+              },
+              "operator": {
+                "type": "and"
+              },
+              "query": {
+                "params": ["A"]
+              },
+              "reducer": {
+                "params": [],
+                "type": "last"
+              },
+              "type": "query"
+            }
+          ],
+          "executionDetails": "executed every 5s",
+          "frequency": "5s",
+          "handler": 1,
+          "name": "High Error Rate (>10%)",
+          "noDataState": "no_data",
+          "notifications": []
+        }
+      },
+      {
+        "type": "stat",
+        "title": "Predictions Count",
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 12,
+          "y": 1
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          }
+        },
+        "targets": [
+          {
+            "expr": "requests_per_minute",
+            "interval": "",
+            "legendFormat": "",
+            "scrapedFrom": "_auto"
+          }
+        ]
+      },
+      {
+        "type": "row",
+        "title": "Timings",
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 5
+        }
+      },
+      {
+        "type": "graph",
+        "title": "Request Latency",
+        "gridPos": {
+          "h": 6,
+          "w": 8,
+          "x": 0,
+          "y": 6
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s"
+          }
+        },
+        "targets": [
+          {
+            "expr": "request_latency_seconds",
+            "interval": "",
+            "legendFormat": "",
+            "scrapedFrom": "_auto"
+          }
+        ]
+      },
+      {
+        "type": "graph",
+        "title": "Inference Latency",
+        "gridPos": {
+          "h": 6,
+          "w": 8,
+          "x": 8,
+          "y": 6
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s"
+          }
+        },
+        "targets": [
+          {
+            "expr": "inference_latency_seconds",
+            "interval": "",
+            "legendFormat": "",
+            "scrapedFrom": "_auto"
+          }
+        ]
+      },
+      {
+        "type": "graph",
+        "title": "90th Percentile Latency",
+        "gridPos": {
+          "h": 6,
+          "w": 8,
+          "x": 16,
+          "y": 6
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s"
+          }
+        },
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.9, rate(request_latency_seconds_bucket[1m]))",
+            "interval": "",
+            "legendFormat": "",
+            "scrapedFrom": "_auto"
+          }
+        ],
+        "alert": {
+          "conditions": [
+            {
+              "evaluator": {
+                "params": [0.1],
+                "type": "gt"
+              },
+              "operator": {
+                "type": "and"
+              },
+              "query": {
+                "params": ["A"]
+              },
+              "reducer": {
+                "params": [],
+                "type": "last"
+              },
+              "type": "query"
+            }
+          ],
+          "executionDetails": "executed every 5s",
+          "frequency": "5s",
+          "handler": 1,
+          "name": "High 90th Percentile Latency (>100ms)",
+          "noDataState": "no_data",
+          "notifications": []
+        }
+      },
+      {
+        "type": "row",
+        "title": "Probas",
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 12
+        }
+      },
+      {
+        "type": "graph",
+        "title": "Prediction Probability",
+        "gridPos": {
+          "h": 6,
+          "w": 24,
+          "x": 0,
+          "y": 13
+        },
+        "targets": [
+          {
+            "expr": "probability",
+            "interval": "",
+            "legendFormat": "",
+            "scrapedFrom": "_auto"
+          }
+        ]
+      },
+      {
+        "type": "row",
+        "title": "Health",
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 19
+        }
+      },
+      {
+        "type": "gauge",
+        "title": "RPM",
+        "gridPos": {
+          "h": 6,
+          "w": 12,
+          "x": 0,
+          "y": 20
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "req/min"
+          }
+        },
+        "targets": [
+          {
+            "expr": "rate(requests_per_minute[1m])",
+            "interval": "",
+            "legendFormat": "",
+            "scrapedFrom": "_auto"
+          }
+        ]
+      },
+      {
+        "type": "gauge",
+        "title": "Error Rate (%)",
+        "gridPos": {
+          "h": 6,
+          "w": 12,
+          "x": 12,
+          "y": 20
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent"
+          }
+        },
+        "targets": [
+          {
+            "expr": "rate(errors_total[1m]) / rate(requests_per_minute[1m]) * 100",
+            "interval": "",
+            "legendFormat": "",
+            "scrapedFrom": "_auto"
+          }
+        ]
+      }
+    ],
+    "time": {
+      "from": "now-5m",
+      "to": "now"
+    },
+    "timepicker": {
+      "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]
+    },
+    "templating": {
+      "list": [
+        {
+          "name": "ModelType",
+          "type": "query",
+          "datasource": "Prometheus",
+          "label": "Model Type",
+          "query": "model_type",
+          "refresh": 1,
+          "allValue": "All",
+          "current": {
+            "text": "All",
+            "value": "$$__all"
+          },
+          "hide": 0
+        },
+        {
+          "name": "Gender",
+          "type": "query",
+          "datasource": "Prometheus",
+          "label": "Gender",
+          "query": "gender_distribution",
+          "refresh": 1,
+          "allValue": "All",
+          "current": {
+            "text": "All",
+            "value": "$$__all"
+          },
+          "hide": 0
+        }
+      ]
+    },
+    "annotations": {
+      "list": []
+    }
+  },
+  "folder": "",
+  "overwrite": true
+}
